@@ -22,4 +22,5 @@ class FetchMovies:
     
     
 if __name__ == "__main__":
-    FetchMovies()
+    movies = FetchMovies()
+    movies.getMovies()
