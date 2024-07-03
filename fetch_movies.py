@@ -11,6 +11,7 @@ class FetchMovies:
         
     # method to get the details of each movie by its movie ID
     def getDetailsById(self, id):
+        print(f'getting id: {id}')
         movie_details_url = f"https://api.themoviedb.org/3/movie/{id}?language=en-US"
         response = requests.get(movie_details_url, headers=self.headers).json()
         return response.get('budget', ''), response.get('revenue', '')
@@ -20,6 +21,7 @@ if __name__ == "__main__":
     
     # https://datasets.imdbws.com/
     # columns names: https://developer.imdb.com/non-commercial-datasets/
+    #Files not added to repository due to large size. Files can be downloaded from the links above
     print("unloading title.basics.tsv.gz...")
     title_basics_df = pd.read_csv('title.basics.tsv.gz', compression='gzip', sep='\t')
     print("unloading title.akas.tsv.gz...")
