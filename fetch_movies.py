@@ -50,20 +50,10 @@ class FetchMovies:
         self.data.to_csv('movies.csv', index=False)
         
     # Private method to get the details of each movie by its movie ID
-    def __getDetailsById(self, id):
+    def getDetailsById(self, id):
         movie_details_url = f"https://api.themoviedb.org/3/movie/{id}?language=en-US"
         response = requests.get(movie_details_url, headers=self.headers).json()
-        genres = [self.genre_dict[genre_id] for genre_id in response.get('genre_ids', [])]
-        return {
-                'movie_title': response.get('title', ''),
-                'genres': ', '.join(genres),  # Convert genre IDs to names
-                'runtime_minutes': response.get('runtime'),
-                'vote_average': response.get('vote_average', ''),
-                'vote_count': response.get('vote_count', ''),
-                'budget': response.get('budget', ''),  
-                'revenue': response.get('revenue', ''),
-                'release_date': response.get('release_date', '')
-            }
+        return response.get('budget', ''), response.get('revenue', '')
         
     # def getMovieDetails(self, filename):
     #     checkpoint = 50
@@ -98,8 +88,11 @@ if __name__ == "__main__":
     
     # https://datasets.imdbws.com/
     # columns names: https://developer.imdb.com/non-commercial-datasets/
+    print("unloading title.basics.tsv.gz...")
     title_basics_df = pd.read_csv('title.basics.tsv.gz', compression='gzip', sep='\t')
+    print("unloading title.akas.tsv.gz...")
     title_akas_df = pd.read_csv('title.akas.tsv.gz', compression='gzip', sep='\t')
+    print("unloading title.ratings.tsv.gz...")
     title_ratings_df = pd.read_csv('title.ratings.tsv.gz', compression='gzip', sep='\t')
     
     # Merge the DataFrames on 'tconst' and 'titleId'
@@ -121,6 +114,10 @@ if __name__ == "__main__":
 
     # Drop the 'titleId' column
     filtered_df = filtered_df.drop(columns=['titleId', 'language', 'originalTitle', 'isAdult', 'ordering', 'title', 'attributes', 'types', 'isOriginalTitle', 'region', 'endYear', 'titleType'])
+    
+    print("getting budget and revenue...")
+    # Use Api to get budget and revenue information
+    filtered_df[['budget', 'revenue']] = filtered_df.apply(lambda id: movies.getDetailsById(id['tconst']), axis=1, result_type='expand')
 
     # Save the filtered DataFrame to a CSV file
-    filtered_df.to_csv('movies_dataset.csv', index=False)
+    filtered_df.to_csv('movies_dataset_complete.csv', index=False)
