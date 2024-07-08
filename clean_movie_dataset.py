@@ -6,10 +6,10 @@ class CleanMovies:
         self.data = self.get_data()
 
     def get_data(self):
-        return pd.read_csv("movies_dataset_complete.csv", index_col = "tconst").dropna()
+        return pd.read_csv("movies_dataset_complete.csv", index_col = "tconst")
     
     def clean_zero_budget_and_revenue(self):
-        self.data = self.data[(self.data['budget'] != 0) & (self.data['revenue'] != 0)]
+        self.data = self.data[(self.data['budget'] != 0) & (self.data['revenue'] != 0)].dropna()
 
     def add_profit_column(self):
         self.data['profit'] = self.data['revenue'] - self.data['budget']
