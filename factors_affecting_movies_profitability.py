@@ -19,6 +19,7 @@ class MovieFactors:
         plt.ylabel('Profitability in millions')
         plt.scatter(self.data['averageRating'], self.data['profit']/1000000, color = 'blue', alpha = 0.5)
         plt.show()
+        # plt.savefig('test2.png')
 
     def group_data_by_rating(self):
         temp = self.data.copy(deep=True)
@@ -39,9 +40,11 @@ class MovieFactors:
         # Referenced this on how to make a histogram using with pre-grouped data
         # https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.bar.html
         plt.show()
+        # plt.savefig('test.png')
     
 
 if __name__ == "__main__":
     movies = MovieFactors()
-    movies.scatter_plot_ratings_vs_profitability()
-    movies.histogram_ratings_vs_profitability()
+    # movies.scatter_plot_ratings_vs_profitability()
+    # movies.histogram_ratings_vs_profitability()
+    display(movies.data.sort_values(by="startYear"))
