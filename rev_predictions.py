@@ -1,11 +1,10 @@
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
-from sklearn.preprocessing import StandardScaler
+from sklearn.preprocessing import StandardScaler, MinMaxScaler
 import pandas as pd
 import matplotlib.pyplot as plt
 
-file_path = 'movie_dataset_cleaned_with_profits.csv'
-movie_data = pd.read_csv(file_path)
+movie_data = pd.read_csv('movie_dataset_cleaned_with_profits.csv')
 
 # Convert runtimeMinutes to numeric, coerce errors to handle non-numeric values
 movie_data['runtimeMinutes'] = pd.to_numeric(movie_data['runtimeMinutes'], errors='coerce')
@@ -18,7 +17,7 @@ X = movie_data[['startYear', 'runtimeMinutes', 'averageRating', 'numVotes', 'bud
 y = movie_data['revenue']
 
 # Normalize the features
-scaler = StandardScaler()
+scaler = MinMaxScaler()
 X_scaled = scaler.fit_transform(X)
 
 # Split the data into training and testing sets
