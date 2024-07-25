@@ -6,7 +6,6 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.preprocessing import OneHotEncoder
-
 import numpy as np
 
 movie_data = pd.read_csv('movie_dataset_cleaned_with_profits.csv')
@@ -51,10 +50,11 @@ linear_reg_rf.fit(y_test.values.reshape(-1, 1), y_pred)
 slope = linear_reg_rf.coef_[0]
 intercept = linear_reg_rf.intercept_
 
+# show prediction scores for training and testing
 print(model.score(X_train, y_train))
 print(model.score(X_test, y_test))
 
-
+# plot the predictions and linear regression 
 plt.scatter(y_test, y_pred, alpha=0.5)
 plt.plot(y_test, y_test * slope + intercept, '--', color='red')
 plt.xlabel('Actual Revenue')
