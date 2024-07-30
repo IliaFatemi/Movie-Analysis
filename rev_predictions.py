@@ -16,6 +16,8 @@ movie_data['runtimeMinutes'] = pd.to_numeric(movie_data['runtimeMinutes'], error
 # Drop Movies that have 0 revenue and runtimeMin and movies before 2000
 movie_data = movie_data[(movie_data['revenue'] > 0) & (movie_data['runtimeMinutes'] > 0) & (movie_data['startYear'] > 2000)]
 
+# Changing units of revenue to be in the millions for easier readibility 
+movie_data['revenue'] = movie_data['revenue'] / 1000000
 
 movie_data_clean = movie_data.replace('\\N', np.nan).dropna()
 
