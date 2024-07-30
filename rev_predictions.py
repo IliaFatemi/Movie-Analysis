@@ -53,8 +53,8 @@ slope = linear_reg_rf.coef_[0]
 intercept = linear_reg_rf.intercept_
 
 # show prediction scores for training and testing
-print(model.score(X_train, y_train))
-print(model.score(X_test, y_test))
+print(f'Training Score: {model.score(X_train, y_train)}')
+print(f'Test Score: {model.score(X_test, y_test)}')
 
 # plot the predictions and linear regression 
 plt.scatter(y_test, y_pred, alpha=0.5)
