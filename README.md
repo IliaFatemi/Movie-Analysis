@@ -14,7 +14,7 @@ This will print the training and test scores in the terminal and it will save an
 ## Project Requirements
 
 ```
-pip install -U scikit-learn;
+pip install scikit-learn;
 pip install pandas;
 pip install matplotlib;
 pip install numpy;
