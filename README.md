@@ -18,4 +18,6 @@ pip install -U scikit-learn;
 pip install pandas;
 pip install matplotlib;
 pip install numpy;
+pip install statsmodels;
+pip install ipython;
 ```
