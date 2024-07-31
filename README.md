@@ -19,7 +19,7 @@ or
 python rev_predictions.py movies_dataset_complete.csv
 ```
 
-This will print the training and test scores in the terminal. A plot of <strong><i>Actual Vs Predicted Revenue</i></strong> and <strong><i>Feature Importance</i></strong> will be shown and saved as a `.png` file. 
+This will print the training and test scores in the terminal. A plot of <strong><i>Actual Vs Predicted Revenue</i></strong> and <strong><i>Feature Importance</i></strong> will be shown and saved as `high_importance_and_rev_prediction.png`. 
 
 ## Project Requirements
 
