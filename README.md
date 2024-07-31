@@ -10,7 +10,7 @@ or
 ```
 python factors_affecting_movies_profitability.py show print
 ```
-The resulting code will show or save graphs about a movies genre, ratings, relesae year and run time as it compares to their median profits.
+The resulting code will show or save graphs about a movies genre, ratings, release year and run time as it compares to their median profits.
 
 ## Predicting Movie Revenue
 
