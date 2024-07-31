@@ -1,5 +1,12 @@
 # CMPT_353_Project
 
+## Factors Affecting Movies Profits
+
+The file `factors_affecting_movies_profitability.py` can be ran to see a graphical representation of that factors that affect a movies profitability. You can run it without any arguments with the command:
+```
+python factors_affecting_movies_profitability.py
+```
+
 ## Predicting Movie Revenue
 
 There are two files for predicting movies reviews. The `revenue_predictions.ipynb` shows the results that is used on the report and `rev_predictions.py` is used for testing which we will demostrate on how to run.<br>
@@ -30,4 +37,5 @@ pip install matplotlib;
 pip install numpy;
 pip install statsmodels;
 pip install ipython;
+pip install scipy;
 ```
