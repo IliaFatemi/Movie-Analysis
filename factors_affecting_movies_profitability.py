@@ -30,7 +30,7 @@ class MovieFactors:
         plt.plot(self.data['averageRating'], self.data['linearRating'] *fit.slope + fit.intercept, color = 'red', linewidth = 3)
         plt.show()
 
-    def RunTimeVSProfitability(self, show):
+    def RunTimeVSMedianProfits(self, show, raw_data):
         plt.figure(figsize=(8,5))
         plt.title('Movies Run Time vs Median Profits', fontsize=16)
         plt.xlabel('Run Time', fontsize=14)
@@ -56,9 +56,9 @@ class MovieFactors:
         runTime = pd.merge(runTime, grouped, on = "runtimeMinutes", how="outer")
         # outer since we want to keep linspace times
 
-        # -- Can uncomment to see which data points are imputed --
-        # pd.set_option('display.max_rows', None)
-        # display(runTime)
+        if raw_data:
+            pd.set_option('display.max_rows', None)
+            display(runTime)
 
         imputerKNN = KNNImputer(n_neighbors=5) 
         # 5 neighbours since a lot of variance in neighbours of data
@@ -74,14 +74,14 @@ class MovieFactors:
         else:
             plt.savefig('Movies_Run_Time_vs_Median_Profits.png')
 
-    def HistogramRatingsVSProfits(self, show):
+    def HistogramRatingsVSProfits(self, show, raw_data):
         rating_groups = np.linspace(1,10,19)
 
         plt.figure(figsize=(10,7))
         plt.title('Movies Ratings vs Median Profits', fontsize=16)
         plt.xlabel('Rating', fontsize=14)
         plt.xticks(rating_groups[:-1])
-        plt.ylabel('Value', fontsize=14)
+        plt.ylabel('Values', fontsize=14)
 
         ## GROUP DATA BY RATING
         temp = self.data.copy(deep=True)
@@ -110,9 +110,9 @@ class MovieFactors:
         total_entries = self.data.shape[0]
         grouped['entries_percentage'] = (grouped['entries'] / total_entries) * 15
 
-        # # -- Can uncomment to see raw data on group pins --
-        # pd.set_option('display.max_rows', None)
-        # display(grouped)
+        if raw_data:
+            pd.set_option('display.max_rows', None)
+            display(grouped)
         
         plt.bar(grouped['groups'] + 0.25, grouped['profit'], width=0.5, edgecolor = "black") # profits
         plt.bar(rating_groups[:-1]+ 0.25, null_groups['profit'],width=0.5, color='none', hatch='/', edgecolor = "black") # inconclusive profits
@@ -127,12 +127,12 @@ class MovieFactors:
         else:
             plt.savefig('Movies_Ratings_vs_Median_Profits.png')
 
-    def HistogramGenreVSProfits(self, show):
+    def HistogramGenreVSProfits(self, show, raw_data):
         plt.figure(figsize=(24,14))
         plt.title('Movies Genres vs Median Profits and Budgets', fontsize=24)
         plt.xlabel('Genres', fontsize=22)
         plt.xticks(rotation = 35, fontsize=16)
-        plt.ylabel('Value', fontsize=22)
+        plt.ylabel('Values', fontsize=22)
         plt.yticks(fontsize=16)
 
         temp = self.data.copy(deep = True)
@@ -156,10 +156,10 @@ class MovieFactors:
         grouped = grouped[grouped['entries'] > 40]
         grouped = grouped.sort_values('profit')
 
-        # -- Can uncomment to see raw data on groups --
-        # display(grouped)
+        if raw_data:
+            display(grouped)
 
-        ## ENTRIES PER RATING GROUP AS A PERCENTAGE SCALED BY 15
+        ## ENTRIES PER GROUP AS A PERCENTAGE SCALED BY 15
         total_entries = temp.shape[0]
         grouped['entries_percentage'] = (grouped['entries'] / total_entries) * 20
 
@@ -175,7 +175,42 @@ class MovieFactors:
             plt.show()
         else:
             plt.savefig('Movies_Genres_vs_Median_Profits_and_Budgets.png')
-    
+
+    def LinePlotProfitsOverTime(self, show, raw_data):
+        plt.figure(figsize=(12,7))
+        plt.title('Movies Release Year vs Median Profits', fontsize=16)
+        plt.xlabel('Years', fontsize=14)
+        plt.xticks()
+        plt.ylabel('Values', fontsize=14)
+
+        ## GROUP DATA BY RATING
+        temp = self.data.copy(deep=True)
+
+        grouped = temp.groupby('startYear', observed = False).agg(
+            profit = pd.NamedAgg(column='profit', aggfunc='median'),
+            entries = pd.NamedAgg(column='profit', aggfunc='count')
+        ).reset_index() # set observed to false remove warning
+
+        grouped = grouped[grouped['entries'] >= 40]
+
+        ## MEDIAN PROFIT for good base line per year
+        median_profit = self.data['profit'].median()
+        grouped['median_profit'] = median_profit
+
+        if raw_data:
+            display(grouped)
+        
+        plt.plot(grouped['startYear'], grouped['profit'], color = 'green') # profit
+        plt.plot(grouped['startYear'], grouped['entries'] * 0.1, color = 'blue') # Num of Movoies Released divided by 10
+        plt.plot(grouped['startYear'], grouped['median_profit'], color = 'red', linestyle='--') # Median Profit
+
+        plt.legend(['Profit in Millions','Number of Movies Released Divided by 10', 'Median Profit Across All Years' ], fontsize = 12)
+
+        if show:
+            plt.show()
+        else:
+            plt.savefig('Movies_Release_Year_vs_Median_Profits.png')
+
     def PrintMedianRunTime(self):
         print(f'Median Run Time: {self.data['runtimeMinutes'].median()}')
     
@@ -203,12 +238,16 @@ if __name__ == "__main__":
     movies = MovieFactors()
     # movies.scatter_plot_ratings_vs_profitability()
 
-    # movies.RunTimeVSProfitability(show = True) # False will save png
-    # movies.HistogramRatingsVSProfits(show = True) # False will save png
-    movies.HistogramGenreVSProfits(show = False) # False will save png
-    # movies.PrintMedianProfit()
-    # movies.PrintMedianRunTime()
-    # movies.PrintMedianRating()
-    # movies.PrintMeanRating()
-    # movies.PrintStandardDeviationRating()
-    # movies.PrintMajorityOfDataInRange()
+    show_graph = not True # False will save it
+    print_raw_data = True
+
+    # movies.RunTimeVSMedianProfits(show_graph, print_raw_data)
+    # movies.HistogramRatingsVSProfits(show_graph, print_raw_data)
+    # movies.HistogramGenreVSProfits(show_graph, print_raw_data)
+    movies.LinePlotProfitsOverTime(show_graph, print_raw_data)
+    movies.PrintMedianProfit()
+    movies.PrintMedianRunTime()
+    movies.PrintMedianRating()
+    movies.PrintMeanRating()
+    movies.PrintStandardDeviationRating()
+    movies.PrintMajorityOfDataInRange()
