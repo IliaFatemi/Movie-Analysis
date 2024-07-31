@@ -55,3 +55,13 @@ if __name__ == "__main__":
 
     # Save the filtered DataFrame to a CSV file
     filtered_df.to_csv('movies_dataset_complete.csv', index=False)
+
+    ## Create cleaned dataset with profits
+
+    cleaned_profits = filtered_df.copy(deep = True)
+
+    cleaned_profits = cleaned_profits[(cleaned_profits['budget'] != 0) & (cleaned_profits['revenue'] != 0)].dropna()
+
+    cleaned_profits['profit'] = cleaned_profits['revenue'] - cleaned_profits['budget']
+
+    cleaned_profits.to_csv("movie_dataset_cleaned_with_profits.csv")
