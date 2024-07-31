@@ -236,15 +236,15 @@ class MovieFactors:
 
 if __name__ == "__main__":
     movies = MovieFactors()
-    # movies.scatter_plot_ratings_vs_profitability()
 
-    show_graph = not True # False will save it
-    print_raw_data = True
+    show_graph = True # False will save it
+    print_raw_data = False
 
-    # movies.RunTimeVSMedianProfits(show_graph, print_raw_data)
-    # movies.HistogramRatingsVSProfits(show_graph, print_raw_data)
-    # movies.HistogramGenreVSProfits(show_graph, print_raw_data)
+    movies.RunTimeVSMedianProfits(show_graph, print_raw_data)
+    movies.HistogramRatingsVSProfits(show_graph, print_raw_data)
+    movies.HistogramGenreVSProfits(show_graph, print_raw_data)
     movies.LinePlotProfitsOverTime(show_graph, print_raw_data)
+
     movies.PrintMedianProfit()
     movies.PrintMedianRunTime()
     movies.PrintMedianRating()
