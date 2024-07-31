@@ -2,7 +2,7 @@
 
 ## Factors Affecting Movies Profits
 
-The file `factors_affecting_movies_profitability.py` can be ran to see the factors that affect a movies profitability. You can run it with the first argument of `show` or `save` which will show or save the graphs. Additionally you can add a second argument of `print` if you want to see additional information about the raw data.
+The file `factors_affecting_movies_profitability.py` can be ran to see the factors that affect a movies profitability. You can run it with the first argument of `show` or `save` which will show or save the graphs. Additionally you can add a second argument of `print` if you want to see additional information about the raw data. You can run the file with the command:
 ```
 python factors_affecting_movies_profitability.py save
 ```
