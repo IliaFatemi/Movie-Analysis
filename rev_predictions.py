@@ -7,8 +7,12 @@ import matplotlib.pyplot as plt
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.preprocessing import OneHotEncoder
 import numpy as np
+import sys
 
-movie_data = pd.read_csv('movie_dataset_cleaned_with_profits.csv')
+movie_data = pd.read_csv(sys.argv[1])
+
+if len(sys.argv[1]) == 0:
+    exit(1)
 
 # Convert runtimeMinutes to numeric, coerce errors to handle non-numeric values
 movie_data['runtimeMinutes'] = pd.to_numeric(movie_data['runtimeMinutes'], errors='coerce')
@@ -57,11 +61,36 @@ print(f'Training Score: {model.score(X_train, y_train)}')
 print(f'Test Score: {model.score(X_test, y_test)}')
 
 # plot the predictions and linear regression 
+plt.figure(figsize=(10, 6))
+plt.subplot(1, 2, 1)
 plt.scatter(y_test, y_pred, alpha=0.5)
 plt.plot(y_test, y_test * slope + intercept, '--', color='red')
 plt.xlabel('Actual Revenue (Millions $)')
 plt.ylabel('Predicted Revenue (Millions $)')
 plt.legend(['Revenue Prediction', 'Linear Fit'], loc="upper left")
 plt.title('Random Forest: Actual vs Predicted Revenue')
-plt.savefig('revenue_predictions.png')
+
+# https://scikit-learn.org/stable/auto_examples/ensemble/plot_forest_importances.html
+importances = model.named_steps['randomforestregressor'].feature_importances_
+indices = np.argsort(importances)[::-1]
+feature_names = X.columns
+
+# Filter out the features with zero importance
+non_zero_indices = indices[importances[indices] > 0]
+non_zero_importances = importances[non_zero_indices]
+non_zero_feature_names = feature_names[non_zero_indices]
+
+importance_threshold = 0.01
+high_importance_indices = non_zero_indices[non_zero_importances > importance_threshold]
+high_importance_values = non_zero_importances[non_zero_importances > importance_threshold]
+high_importance_feature_names = non_zero_feature_names[non_zero_importances > importance_threshold]
+high_importance_feature_names = high_importance_feature_names.str.replace(r'genres_.*', 'genres', regex=True)
+
+plt.subplot(1, 2, 2)
+plt.title('Feature Importances')
+plt.bar(range(len(high_importance_values)), high_importance_values, align='center')
+plt.xticks(range(len(high_importance_values)), high_importance_feature_names, rotation=90)
+plt.ylabel('Importance')
+plt.tight_layout()
+plt.savefig('high_importance_and_rev_prediction.png')
 plt.show()
