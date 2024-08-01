@@ -5,6 +5,7 @@ from scipy import stats
 from IPython.display import display
 from sklearn.impute import KNNImputer
 from statsmodels.nonparametric.smoothers_lowess import lowess
+import sys
 
 class MovieFactors:
     def __init__(self):
@@ -57,12 +58,20 @@ class MovieFactors:
         # outer since we want to keep linspace times
 
         if raw_data:
+            print('\nRUN TIME GROUPED DATA WITHOUT IMPUTING\n')
             pd.set_option('display.max_rows', None)
             display(runTime)
+            print('\n')
 
         imputerKNN = KNNImputer(n_neighbors=5) 
         # 5 neighbours since a lot of variance in neighbours of data
         runTime = pd.DataFrame(imputerKNN.fit_transform(runTime), columns=runTime.columns)
+
+        if raw_data:
+            print('\nRUN TIME GROUPED DATA WITH IMPUTING\n')
+            pd.set_option('display.max_rows', None)
+            display(runTime)
+            print('\n')
 
         fit = stats.linregress(runTime['runtimeMinutes'], runTime['median_profit'])
         plt.plot(runTime['runtimeMinutes'], runTime['runtimeMinutes'] *fit.slope + fit.intercept, color = 'red', linewidth = 1)
@@ -111,8 +120,10 @@ class MovieFactors:
         grouped['entries_percentage'] = (grouped['entries'] / total_entries) * 15
 
         if raw_data:
+            print('\nRATING GROUPED DATA\n')
             pd.set_option('display.max_rows', None)
             display(grouped)
+            print('\n')
         
         plt.bar(grouped['groups'] + 0.25, grouped['profit'], width=0.5, edgecolor = "black") # profits
         plt.bar(rating_groups[:-1]+ 0.25, null_groups['profit'],width=0.5, color='none', hatch='/', edgecolor = "black") # inconclusive profits
@@ -153,11 +164,13 @@ class MovieFactors:
             entries = pd.NamedAgg(column='profit', aggfunc='count'),
         ).reset_index() # set observed to false remove warning
 
+        if raw_data:
+            print('\nGENRE GROUPED DATA\n')
+            display(grouped)
+            print('\n')
+
         grouped = grouped[grouped['entries'] > 40]
         grouped = grouped.sort_values('profit')
-
-        if raw_data:
-            display(grouped)
 
         ## ENTRIES PER GROUP AS A PERCENTAGE SCALED BY 15
         total_entries = temp.shape[0]
@@ -191,14 +204,17 @@ class MovieFactors:
             entries = pd.NamedAgg(column='profit', aggfunc='count')
         ).reset_index() # set observed to false remove warning
 
+        if raw_data:
+            print('\nYEARLY GROUPED DATA\n')
+            pd.set_option('display.max_rows', None)
+            display(grouped)
+            print('\n')
+
         grouped = grouped[grouped['entries'] >= 40]
 
         ## MEDIAN PROFIT for good base line per year
         median_profit = self.data['profit'].median()
         grouped['median_profit'] = median_profit
-
-        if raw_data:
-            display(grouped)
         
         plt.plot(grouped['startYear'], grouped['profit'], color = 'green') # profit
         plt.plot(grouped['startYear'], grouped['entries'] * 0.1, color = 'blue') # Num of Movoies Released divided by 10
@@ -234,17 +250,40 @@ class MovieFactors:
         # https://stackoverflow.com/questions/455612/limiting-floats-to-two-decimal-points
 
 
+def check_user_input():
+    show_graph = True # False will save it
+    print_raw_data = False
+    if (len(sys.argv) == 3):
+        if (sys.argv[2] == 'print'):
+            print_raw_data = True
+        else:
+            print("Error: 2nd argument should be 'print' or left empty")
+        if (sys.argv[1] == 'show'):
+            show_graph = True
+        elif (sys.argv[1] == 'save'):
+            show_graph = False
+        else:
+            print("Error: 1st argument should be 'save' or 'show'")
+    elif (len(sys.argv) == 2):
+        if (sys.argv[1] == 'show'):
+            show_graph = True
+        elif (sys.argv[1] == 'save'):
+            show_graph = False
+        else:
+            print("Error: 1st argument should be 'save' or 'show'")
+    return show_graph, print_raw_data
+
 if __name__ == "__main__":
+    # True,     False      by Default with no user input
+    show_graph, print_raw_data = check_user_input()
+    
     movies = MovieFactors()
-    # movies.scatter_plot_ratings_vs_profitability()
 
-    show_graph = not True # False will save it
-    print_raw_data = True
-
-    # movies.RunTimeVSMedianProfits(show_graph, print_raw_data)
-    # movies.HistogramRatingsVSProfits(show_graph, print_raw_data)
-    # movies.HistogramGenreVSProfits(show_graph, print_raw_data)
+    movies.RunTimeVSMedianProfits(show_graph, print_raw_data)
+    movies.HistogramRatingsVSProfits(show_graph, print_raw_data)
+    movies.HistogramGenreVSProfits(show_graph, print_raw_data)
     movies.LinePlotProfitsOverTime(show_graph, print_raw_data)
+
     movies.PrintMedianProfit()
     movies.PrintMedianRunTime()
     movies.PrintMedianRating()
