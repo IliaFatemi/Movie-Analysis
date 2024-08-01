@@ -45,6 +45,7 @@ class MovieFactors:
             median_profit = pd.NamedAgg(column='profit', aggfunc='median'),
             entries = pd.NamedAgg(column='profit', aggfunc='count'),
         ).reset_index() 
+        
         grouped = grouped[grouped['entries'] >= 20] 
         # drop groupings less than 20 as data may get skewed by outliers
 
